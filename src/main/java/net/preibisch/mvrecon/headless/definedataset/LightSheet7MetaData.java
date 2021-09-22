@@ -404,6 +404,9 @@ public class LightSheet7MetaData
 		{
 			final double[] pos = new double[3];
 			final OMEPyramidStore current_meta = (OMEPyramidStore) r.getMetadataStore();
+
+			String acquisition_mode = (metaData.get("Experiment|AcquisitionBlock|TilesSetup|PositionGroup|TileAcquisitionMode #1")).toString();
+
 			if (anglesList.size() != numAorT)
 			{
 				for ( int at = 0; at < numAorT; at++ )
@@ -421,9 +424,18 @@ public class LightSheet7MetaData
 						Double number_x_tiles = getDouble(metaData, "Experiment|AcquisitionBlock|TilesSetup|PositionGroup|TilesX #1");
 						if (number_x_tiles > 1)
 						{
-							Double half_width = Double.parseDouble(current_meta.getPixelsSizeX(0).toString()) / 2;
-							tmp_x = tmp_x - ( half_width * (1 - overlap) * x_cal);
+							if (acquisition_mode.equals("CenteredGrid"))
+							{
+								Double width = Double.parseDouble(current_meta.getPixelsSizeX(0).toString()) ;
+								tmp_x = tmp_x - ( width * (1 - overlap) * (number_x_tiles / 2.0 - 0.5) * x_cal);
+							}
+							if (acquisition_mode.equals("ConvexHull"))
+							{
+								Double orig_tmp = (Double) current_meta.getPlanePositionX(0, corrected_number_planes - 1).value();
+								tmp_x = orig_tmp;
+							}
 						}
+
 					}
 					if (at != 0)
 					{
@@ -431,18 +443,30 @@ public class LightSheet7MetaData
 						Double tmp_x_cal = (Double) tmp_x * x_cal;
 						tmp_x = tmp_x_cal + orig_tmp;
 					}
+
+
+
 					pos[ 0 ] = (tmp_x != null) ? Double.parseDouble( tmp_x.toString() ) : 0.0;
 
 					tmp = current_meta.getPlanePositionY(at, corrected_number_planes - 1).value();
 					Double tmp_y = Double.parseDouble(tmp.toString());
 					Double y_cal = (Double) current_meta.getPixelsPhysicalSizeY(0).value();
+
 					if (at == 0)
 					{
 						Double number_y_tiles = getDouble(metaData, "Experiment|AcquisitionBlock|TilesSetup|PositionGroup|TilesY #1");
 						if (number_y_tiles > 1)
 						{
-							Double half_height = Double.parseDouble((current_meta.getPixelsSizeY(0)).toString()) / 2;
-							tmp_y = tmp_y - ( half_height * (1 - overlap) * y_cal) ;
+							if (acquisition_mode.equals("CenteredGrid"))
+							{
+								Double height = Double.parseDouble((current_meta.getPixelsSizeY(0)).toString());
+								tmp_y = tmp_y - ( height * (1 - overlap) * (number_y_tiles / 2.0 - 0.5) * y_cal) ;
+							}
+							if (acquisition_mode.equals("ConvexHull"))
+							{
+								Double orig_tmp = (Double) current_meta.getPlanePositionY(0, corrected_number_planes - 1).value();
+								tmp_y = orig_tmp;
+							}
 						}
 					}
 					if (at != 0)
@@ -451,6 +475,7 @@ public class LightSheet7MetaData
 						Double tmp_xy_cal = (Double) tmp_y * y_cal;
 						tmp_y = tmp_xy_cal + orig_tmp;
 					}
+
 					pos[ 1 ] = (tmp_y != null) ? Double.parseDouble( tmp_y.toString() ) : 0.0;
 
 					tmp = current_meta.getPlanePositionZ(0, corrected_number_planes - 1).value();
@@ -491,6 +516,7 @@ public class LightSheet7MetaData
 						tileLocations.add( pos.clone() );
 
 						tiles[ at ] = "Tile" + at;
+
 					}
 				}
 			}
