@@ -106,7 +106,6 @@ public class Resave_TIFF implements PlugIn
 		progressWriter.out().println( "starting export..." );
 
 		final Parameters params = getParameters();
-		IOFunctions.println("Here in run");
 
 		if ( params == null )
 			return;
@@ -181,7 +180,6 @@ public class Resave_TIFF implements PlugIn
 
 	public static Parameters getParameters()
 	{
-		IOFunctions.println("Here in getParams");
 		final GenericDialogPlus gd = new GenericDialogPlus( "Resave dataset as TIFF" );
 
 		if ( defaultPath == null )
