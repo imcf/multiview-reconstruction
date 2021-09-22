@@ -201,6 +201,8 @@ public class Save3dTIFF implements ImgExport, Calibrateable
 		imp_cal.pixelHeight = numbers[1];
 		imp_cal.pixelDepth = numbers[2];
 
+		cal = numbers[0];
+
 		// determine min and max
 		final double[] minmax = DisplayImage.getFusionMinMax( img, min, max );
 
