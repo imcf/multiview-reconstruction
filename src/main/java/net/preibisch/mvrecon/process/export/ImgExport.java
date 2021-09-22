@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
@@ -41,7 +41,7 @@ public interface ImgExport
 
 	/**
 	 * Exports the image (min and max intensity will be computed)
-	 * 
+	 *
 	 * @param img - Note, in rare cases this can be null (i.e. do nothing)
 	 * @param bb - the bounding box used to fuse this image
 	 * @param downsampling - how much it was downsampled (or NaN if not)
@@ -58,10 +58,10 @@ public interface ImgExport
 			final double anisoF,
 			final String title,
 			final Group< ? extends ViewId > fusionGroup );
-	
+
 	/**
 	 * Exports the image using a predefined min/max
-	 * 
+	 *
 	 * @param img - Note, in rare cases this can be null (i.e. do nothing)
 	 * @param bb - the bounding box used to fuse this image
 	 * @param downsampling - how much it was downsampled (or NaN if not)
@@ -82,17 +82,16 @@ public interface ImgExport
 			final Group< ? extends ViewId > fusionGroup,
 			final double min,
 			final double max );
-	
 	/*
 	 * Query the necessary parameters for the fusion (new dialog can be made)
-	 * 
+	 *
 	 * @return success? true or false
 	 */
 	public abstract boolean queryParameters( final FusionExportInterface fusion );
 
 
 	public abstract ImgExport newInstance();
-	
+
 	/**
 	 * @return - to be displayed in the generic dialog
 	 */

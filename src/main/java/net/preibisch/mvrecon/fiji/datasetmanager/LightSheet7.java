@@ -174,12 +174,10 @@ public class LightSheet7 implements MultiViewDatasetDefinition
 		IOFunctions.println("Number of tiles : " + meta.numTiles());
 		IOFunctions.println("Number of illuminations : " + meta.numIlluminations());
 
-		IOFunctions.println("Before channels");
 		final ArrayList< Channel > channels = new ArrayList< Channel >();
 		for ( int c = 0; c < meta.numChannels(); ++c )
 			channels.add( new Channel( c, meta.channels()[ c ] ) );
 
-		IOFunctions.println("Before tiles");
 		final ArrayList< Tile > tiles = new ArrayList<>();
 		// Integer tile_number = meta.numTiles();
 		// if (tile_number == meta.numAngles())
@@ -191,12 +189,10 @@ public class LightSheet7 implements MultiViewDatasetDefinition
 			Tile t = new Tile( i, meta.tiles()[  i], meta.tileLocations().get( i ) );
 			tiles.add( t );
 		}
-		IOFunctions.println("Before illuminations");
 		final ArrayList< Illumination > illuminations = new ArrayList< Illumination >();
 		for ( int i = 0; i < meta.numIlluminations(); ++i )
 			illuminations.add( new Illumination( i, meta.illuminations()[ i ] ) );
 
-		IOFunctions.println("Before angles");
 		final ArrayList< Angle > angles = new ArrayList< Angle >();
 		for ( int a = 0; a < meta.numAngles(); ++a )
 		{
@@ -222,7 +218,6 @@ public class LightSheet7 implements MultiViewDatasetDefinition
 			angles.add( angle );
 		}
 
-		IOFunctions.println("Before views");
 		final ArrayList< ViewSetup > viewSetups = new ArrayList< ViewSetup >();
 		for ( final Channel c : channels )
 			for ( final Illumination i : illuminations )

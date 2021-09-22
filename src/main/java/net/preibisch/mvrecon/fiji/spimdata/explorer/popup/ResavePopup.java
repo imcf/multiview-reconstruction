@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
@@ -141,7 +141,7 @@ public class ResavePopup extends JMenu implements ExplorerWindowSetable
 
 					final List< ViewId > viewIds = ApplyTransformationPopup.getSelectedViews( panel );
 					String question;
-					
+
 					final boolean notAllSelected = viewIds.size() < data.getSequenceDescription().getViewDescriptions().size();
 
 					// user has not selected all views (or not all views are selectable at once)
@@ -152,13 +152,13 @@ public class ResavePopup extends JMenu implements ExplorerWindowSetable
 							"You have only selected " + viewIds.size() + " of " +
 							data.getSequenceDescription().getViewDescriptions().size() + " views for export.\n" +
 							"(the rest will not be visible in the new dataset - except they are missing)\n";
-						
+
 						final int  choice = JOptionPane.showConfirmDialog( null,
 								question + "Note: this will first save the current state of the open XML.\n"
 										+ "Do you wish to expand the selection to the whole dataset before continuing?",
 								"Warning",
 								JOptionPane.YES_NO_CANCEL_OPTION );
-						
+
 						if (choice == JOptionPane.CANCEL_OPTION)
 							return;
 						else if (choice == JOptionPane.YES_OPTION)
@@ -172,7 +172,7 @@ public class ResavePopup extends JMenu implements ExplorerWindowSetable
 							IOFunctions.println( "Saving " + viewIds.size() + " of " + data.getSequenceDescription().getViewDescriptions().size() + " views.");
 						}
 					}
-					
+
 					// all views in SpimData have been selected, ask user for confirmation before starting resave.
 					else
 					{
@@ -210,8 +210,8 @@ public class ResavePopup extends JMenu implements ExplorerWindowSetable
 						params.xmlFile = panel.xml();
 
 						// write the TIFF's
-						Resave_TIFF.writeTIFF( data, viewIds, new File( params.xmlFile ).getParent(), params.compress, progressWriter );
-	
+						Resave_TIFF.writeTIFF( data, viewIds, new File( params.xmlFile ).getParent(), params.compress, progressWriter, params.getXMLFile() );
+
 						// write the XML
 						final Pair< SpimData2, List< String > > result = Resave_TIFF.createXMLObject( data, viewIds, params );
 						progressWriter.setProgress( 1.01 );
@@ -251,7 +251,7 @@ public class ResavePopup extends JMenu implements ExplorerWindowSetable
 								hdf5Filename = panel.xml().substring( 0, panel.xml().length() - 4 ) + ".v" + (i++) + ".h5";
 
 							hdf5File = new File( hdf5Filename );
-	
+
 							if ( hdf5File.exists() )
 								IOFunctions.println( "HDF5 file exists, choosing a different name: " + hdf5File.getAbsolutePath() + ". Please do not forget to the delete the old file if you want." );
 

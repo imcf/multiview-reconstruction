@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.lang.reflect.Field;
 
 import bdv.export.ProgressWriter;
 import fiji.util.gui.GenericDialogPlus;
@@ -87,7 +88,7 @@ public class Resave_TIFF implements PlugIn
 		public ImgFactory< ? extends NativeType< ? > > imgFactory;
 		public String xmlFile;
 		public boolean compress;
-		
+
 		public boolean compress() { return compress; }
 		public String getXMLFile() { return xmlFile; }
 		public ImgFactory< ? extends NativeType< ? > > getImgFactory() { return imgFactory; }
@@ -103,9 +104,9 @@ public class Resave_TIFF implements PlugIn
 
 		final ProgressWriter progressWriter = new ProgressWriterIJ();
 		progressWriter.out().println( "starting export..." );
-		
+
 		final Parameters params = getParameters();
-		
+
 		if ( params == null )
 			return;
 
@@ -113,7 +114,7 @@ public class Resave_TIFF implements PlugIn
 		final List< ViewId > viewIds = SpimData2.getAllViewIdsSorted( data, lpq.getViewSetupsToProcess(), lpq.getTimePointsToProcess() );
 
 		// write the TIFF's
-		writeTIFF( data, viewIds, new File( params.xmlFile ).getParent(), params.compress, progressWriter );
+		writeTIFF( data, viewIds, new File( params.xmlFile ).getParent(), params.compress, progressWriter, params.getXMLFile() );
 
 		// write the XML
 		try
@@ -144,10 +145,10 @@ public class Resave_TIFF implements PlugIn
 		// test if source and target directory are identical, if so stop
 		String from = srcBase.getAbsolutePath();
 		String to = destBase.getAbsolutePath();
-		
+
 		from = from.replace( "/./", "/" );
 		to = to.replace( "/./", "/" );
-		
+
 		if ( from.endsWith( "/." ) )
 			from = from.substring( 0, from.length() - 2 );
 
@@ -158,7 +159,7 @@ public class Resave_TIFF implements PlugIn
 			return;
 
 		final File src = new File( srcBase, "interestpoints" );
-		
+
 		if ( src.exists() )
 		{
 			final File target = new File( destBase, "interestpoints" );
@@ -188,7 +189,7 @@ public class Resave_TIFF implements PlugIn
 		//gd.addCheckbox( "Lossless compression of TIFF files (ZIP)", defaultCompress );
 
 		gd.showDialog();
-		
+
 		if ( gd.wasCanceled() )
 			return null;
 
@@ -213,13 +214,14 @@ public class Resave_TIFF implements PlugIn
 
 	public static void writeTIFF( final SpimData spimData, final List< ViewId > viewIds, final String path, final boolean compress, final ProgressWriter progressWriter )
 	{
+
 		if ( compress )
 			IOFunctions.println( new Date( System.currentTimeMillis() ) + ": Saving compressed TIFFS to directory '" + path + "'" );
 		else
 			IOFunctions.println( new Date( System.currentTimeMillis() ) + ": Saving TIFFS to directory '" + path + "'" );
-		
+
 		final Save3dTIFF save = new Save3dTIFF( path, compress );
-		
+
 		final int numAngles = SpimData2.getAllAnglesSorted( spimData, viewIds ).size();
 		final int numChannels = SpimData2.getAllChannelsSorted( spimData, viewIds ).size();
 		final int numIlluminations = SpimData2.getAllIlluminationsSorted( spimData, viewIds ).size();
@@ -232,7 +234,7 @@ public class Resave_TIFF implements PlugIn
 		{
 			i++;
 
-			final ViewDescription viewDescription = spimData.getSequenceDescription().getViewDescription( 
+			final ViewDescription viewDescription = spimData.getSequenceDescription().getViewDescription(
 					viewId.getTimePointId(), viewId.getViewSetupId() );
 
 			if ( !viewDescription.isPresent() )
@@ -253,11 +255,64 @@ public class Resave_TIFF implements PlugIn
 
 			if ( numAngles > 1 )
 				filename += "_Angle" + viewDescription.getViewSetup().getAngle().getName();
-			
+
 			if ( numTiles > 1 )
 				filename += "_Tile" + viewDescription.getViewSetup().getTile().getName();
 
 			save.exportImage( img, filename );
+
+			progressWriter.setProgress( ((i-1) / (double)viewIds.size()) * 95.00  );
+		}
+	}
+
+	public static void writeTIFF( final SpimData spimData, final List< ViewId > viewIds, final String path, final boolean compress, final ProgressWriter progressWriter, final String xml_path )
+	{
+
+		if ( compress )
+			IOFunctions.println( new Date( System.currentTimeMillis() ) + ": Saving compressed TIFFS to directory '" + path + "'" );
+		else
+			IOFunctions.println( new Date( System.currentTimeMillis() ) + ": Saving TIFFS to directory '" + path + "'" );
+
+		final Save3dTIFF save = new Save3dTIFF( path, compress );
+
+		final int numAngles = SpimData2.getAllAnglesSorted( spimData, viewIds ).size();
+		final int numChannels = SpimData2.getAllChannelsSorted( spimData, viewIds ).size();
+		final int numIlluminations = SpimData2.getAllIlluminationsSorted( spimData, viewIds ).size();
+		final int numTimepoints =  SpimData2.getAllTimePointsSorted( spimData, viewIds ).size();
+		final int numTiles =  SpimData2.getAllTilesSorted( spimData, viewIds ).size();
+
+		int i = 0;
+
+		for ( final ViewId viewId : viewIds )
+		{
+			i++;
+
+			final ViewDescription viewDescription = spimData.getSequenceDescription().getViewDescription(
+					viewId.getTimePointId(), viewId.getViewSetupId() );
+
+			if ( !viewDescription.isPresent() )
+				continue;
+
+			final RandomAccessibleInterval img = spimData.getSequenceDescription().getImgLoader().getSetupImgLoader( viewId.getViewSetupId() ).getImage( viewId.getTimePointId(), LOAD_COMPLETELY );
+
+			String filename = "img";
+
+			if ( numTimepoints > 1 )
+				filename += "_TL" + viewId.getTimePointId();
+
+			if ( numChannels > 1 )
+				filename += "_Ch" + viewDescription.getViewSetup().getChannel().getName();
+
+			if ( numIlluminations > 1 )
+				filename += "_Ill" + viewDescription.getViewSetup().getIllumination().getName();
+
+			if ( numAngles > 1 )
+				filename += "_Angle" + viewDescription.getViewSetup().getAngle().getName();
+
+			if ( numTiles > 1 )
+				filename += "_Tile" + viewDescription.getViewSetup().getTile().getName();
+
+			save.exportImage( img, filename, xml_path, i - 1 );
 
 			progressWriter.setProgress( ((i-1) / (double)viewIds.size()) * 95.00  );
 		}
@@ -280,25 +335,25 @@ public class Resave_TIFF implements PlugIn
 			filename += "_TL{t}";
 			layoutTP = 1;
 		}
-		
+
 		if ( numChannels > 1 )
 		{
 			filename += "_Ch{c}";
 			layoutChannels = 1;
 		}
-		
+
 		if ( numIlluminations > 1 )
 		{
 			filename += "_Ill{i}";
 			layoutIllum = 1;
 		}
-		
+
 		if ( numAngles > 1 )
 		{
 			filename += "_Angle{a}";
 			layoutAngles = 1;
 		}
-		
+
 		if ( numTiles > 1 )
 		{
 			filename += "_Tile{x}";
@@ -322,7 +377,7 @@ public class Resave_TIFF implements PlugIn
 
 		return new ValuePair< SpimData2, List< String > >( newSpimData, filesToCopy );
 	}
-	
+
 	public static String listAllTimePoints( final List<TimePoint> timePointsToProcess )
 	{
 		String t = "" + timePointsToProcess.get( 0 ).getId();
@@ -346,15 +401,15 @@ public class Resave_TIFF implements PlugIn
 		else
 		{
 			boolean contains = false;
-			
+
 			for ( int i = 0; i < filesToCopy.size() && !contains; ++i )
 				if ( src.getName().contains( filesToCopy.get( i ) ) )
 					contains = true;
-			
+
 			if ( contains )
 			{
 				final InputStream in = new FileInputStream( src );
-				final OutputStream out = new FileOutputStream( dest ); 
+				final OutputStream out = new FileOutputStream( dest );
 
 				final byte[] buffer = new byte[ 65535 ];
 
@@ -372,9 +427,9 @@ public class Resave_TIFF implements PlugIn
 	/**
 	 * Assembles a new SpimData2 based on the subset of timepoints and viewsetups as selected by the user.
 	 * The imgloader is still not set here.
-	 * 
+	 *
 	 * It also fills up a list of filesToCopy from the interestpoints directory if it is not null.
-	 * 
+	 *
 	 * @param spimData - the source SpimData
 	 * @param filesToCopy - list to be filled with files to copy
 	 * @param viewIds - view subset to resave
@@ -401,7 +456,7 @@ public class Resave_TIFF implements PlugIn
 
 		// a hashset for all viewsetups that remain
 		final Set< ViewId > views = new HashSet< ViewId >();
-		
+
 		for ( final ViewId viewId : viewIds )
 			views.add( new ViewId( viewId.getTimePointId(), viewId.getViewSetupId() ) );
 
@@ -429,13 +484,13 @@ public class Resave_TIFF implements PlugIn
 		// re-assemble the registrations
 		final Map< ViewId, ViewRegistration > oldRegMap = spimData.getViewRegistrations().getViewRegistrations();
 		final Map< ViewId, ViewRegistration > newRegMap = new HashMap< ViewId, ViewRegistration >();
-		
+
 		for ( final ViewId viewId : oldRegMap.keySet() )
 			if ( views.contains( viewId ) )
 				newRegMap.put( viewId, oldRegMap.get( viewId ) );
 
 		final ViewRegistrations viewRegistrations = new ViewRegistrations( newRegMap );
-		
+
 		// re-assemble the interestpoints and a list of filenames to copy
 		final Map< ViewId, ViewInterestPointLists > oldInterestPoints = spimData.getViewInterestPoints().getViewInterestPoints();
 		final Map< ViewId, ViewInterestPointLists > newInterestPoints = new HashMap< ViewId, ViewInterestPointLists >();

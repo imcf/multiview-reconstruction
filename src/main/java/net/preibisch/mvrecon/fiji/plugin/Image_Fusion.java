@@ -9,12 +9,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
@@ -71,7 +71,7 @@ import net.preibisch.mvrecon.process.interestpointregistration.pairwise.constell
 
 /**
  * Plugin to fuse images using transformations from the SpimData object
- * 
+ *
  * @author Stephan Preibisch (stephan.preibisch@gmx.de)
  *
  */
@@ -204,7 +204,7 @@ public class Image_Fusion implements PlugIn
 				final HashMap< ViewId, AffineTransform3D > registrations = new HashMap<>();
 
 				// get updated registration for views to fuse AND all other views that may influence the fusion
-				for ( final ViewId viewId : fusion.getNonRigidParameters().isActive() ? 
+				for ( final ViewId viewId : fusion.getNonRigidParameters().isActive() ?
 						Sets.union( group.getViews(), viewsToUse.stream().collect( Collectors.toSet() ) ) : group.getViews() )
 				{
 					final ViewRegistration vr = spimData.getViewRegistrations().getViewRegistration( viewId );
@@ -276,7 +276,7 @@ public class Image_Fusion implements PlugIn
 		}
 
 		exporter.finish();
-		
+
 		taskExecutor.shutdown();
 
 		IOFunctions.println( "(" + new Date(System.currentTimeMillis()) + "): DONE." );
@@ -336,7 +336,7 @@ public class Image_Fusion implements PlugIn
 				processedOutput = FusionTools.copyImg( output, new ImagePlusImgFactory< T >(), type, taskExecutor, true );
 			}
 		}
-			
+
 
 		final String title = getTitle( fusion.getSplittingType(), group );
 

@@ -201,7 +201,6 @@ public class LightSheet7MetaData
 		// number each angle and tile has its own series
 		final int numAorT = r.getSeriesCount();
 		final int numTiles = numAorT;
-		// IOFunctions.println(numAorT);
 
 		// final int numTiles = metaData.get( "Experiment|AcquisitionBlock|TilesSetup|PositionGroup|TilesX #1") * metadata.get( "Experiment|AcquisitionBlock|TilesSetup|PositionGroup|TilesY #1");
 
@@ -405,6 +404,7 @@ public class LightSheet7MetaData
 		{
 			final double[] pos = new double[3];
 			final OMEPyramidStore current_meta = (OMEPyramidStore) r.getMetadataStore();
+
 			String acquisition_mode = (metaData.get("Experiment|AcquisitionBlock|TilesSetup|PositionGroup|TileAcquisitionMode #1")).toString();
 
 			if (anglesList.size() != numAorT)
@@ -504,7 +504,6 @@ public class LightSheet7MetaData
 					IOFunctions.println("No tiles found");
 					for ( int at = 0; at < numAorT; ++at )
 					{
-						IOFunctions.println(at);
 						Double tmp_x = getDouble( metaData, "Information|Image|V|View|PositionX #" + Integer.toString( at+1 ) );
 						pos[ 0 ] = (tmp_x != null) ? tmp_x : 0.0;
 
@@ -517,7 +516,7 @@ public class LightSheet7MetaData
 						tileLocations.add( pos.clone() );
 
 						tiles[ at ] = "Tile" + at;
-						// IOFunctions.println(Arrays.toString(pos));
+
 					}
 				}
 			}
@@ -711,8 +710,6 @@ public class LightSheet7MetaData
 				final int height = (int)vd.getViewSetup().getSize().dimension( 1 );
 				final int depth = (int)vd.getViewSetup().getSize().dimension( 2 );
 				final int numPx = width * height;
-
-				// IOFunctions.println(Arrays.toString(t.getLocation()));
 
 				// set the right tile
 				r.setSeries( t.getId() );

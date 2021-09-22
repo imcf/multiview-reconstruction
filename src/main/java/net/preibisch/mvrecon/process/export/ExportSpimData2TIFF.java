@@ -5,16 +5,16 @@
  * %%
  * Copyright (C) 2012 - 2021 Multiview Reconstruction developers.
  * %%
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software: you can retribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
@@ -108,7 +108,7 @@ public class ExportSpimData2TIFF implements ImgExport
 			final double max )
 	{
 		// write the image
-		if ( !this.saver.exportImage( img, bb, downsampling, anisoF, title, fusionGroup, min, max ) )
+		if ( !this.saver.exportImage( img, bb, downsampling, anisoF, title, fusionGroup, min, max, params.getXMLFile(), 1 ) )
 			return false;
 
 		final ViewId newViewId = identifyNewViewId( newTimepoints, newViewSetups, fusionGroup, fusion );
@@ -124,14 +124,14 @@ public class ExportSpimData2TIFF implements ImgExport
 		final double ai = Double.isNaN( anisoF ) ? 1.0 : anisoF;
 
 		final AffineTransform3D m = new AffineTransform3D();
-		m.set( scale, 0.0f, 0.0f, bb.min( 0 ), 
+		m.set( scale, 0.0f, 0.0f, bb.min( 0 ),
 			   0.0f, scale, 0.0f, bb.min( 1 ),
 			   0.0f, 0.0f, scale * ai, bb.min( 2 ) * ai ); // TODO: bb * ai is right?
 		final ViewTransform vt = new ViewTransformAffine( "fusion bounding box", m );
 
 		vr.getTransformList().clear();
 		vr.getTransformList().add( vt );
-		
+
 		return true;
 	}
 
@@ -148,7 +148,8 @@ public class ExportSpimData2TIFF implements ImgExport
 		try
 		{
 			io.save( newSpimData, new File( params.getXMLFile() ).getAbsolutePath() );
-			
+			IOFunctions.println(params.getXMLFile());
+
 			IOFunctions.println( "(" + new Date( System.currentTimeMillis() ) + "): Saved xml '" + io.lastFileName() + "'." );
 
 			// this spimdata object was not modified, we just wrote a new one
@@ -167,9 +168,9 @@ public class ExportSpimData2TIFF implements ImgExport
 	{
 		if ( Resave_TIFF.defaultPath == null )
 			Resave_TIFF.defaultPath = "";
-		
+
 		this.params = Resave_TIFF.getParameters();
-		
+
 		if ( this.params == null )
 			return false;
 
@@ -223,7 +224,7 @@ public class ExportSpimData2TIFF implements ImgExport
 
 			final int oc = old.getViewSetup().getChannel().getId();
 			final int oi = old.getViewSetup().getIllumination().getId();
-	
+
 			for ( final ViewSetup vs : newViewSetups )
 				if ( vs.getChannel().getId() == oc && vs.getIllumination().getId() == oi )
 					vsNew = vs;
@@ -234,7 +235,7 @@ public class ExportSpimData2TIFF implements ImgExport
 		{
 			return new ViewId( 0, 0 );
 		}
-		else if ( fusion.getSplittingType() == 3 ) // "Each view" 
+		else if ( fusion.getSplittingType() == 3 ) // "Each view"
 		{
 			return fusion.getSpimData().getSequenceDescription().getViewDescription( fusionGroup.iterator().next() );
 		}
@@ -353,7 +354,7 @@ public class ExportSpimData2TIFF implements ImgExport
 	 * @param basePath the base path
 	 * @return the new SpimData2
 	 */
-	public static SpimData2 assembleSpimData2( 
+	public static SpimData2 assembleSpimData2(
 			final List< TimePoint > timepointsToProcess,
 			final List< ViewSetup > viewSetupsToProcess,
 			final File basePath )
@@ -371,24 +372,24 @@ public class ExportSpimData2TIFF implements ImgExport
 			e.printStackTrace();
 			return null;
 		}
-		
+
 		final MissingViews missingViews = new MissingViews( new ArrayList< ViewId >() );
-				
+
 		// instantiate the sequencedescription
 		final SequenceDescription sequenceDescription = new SequenceDescription( timepoints, viewSetupsToProcess, null, missingViews );
 
 		// assemble the viewregistrations
 		final Map< ViewId, ViewRegistration > regMap = new HashMap< ViewId, ViewRegistration >();
-		
+
 		for ( final ViewDescription vDesc : sequenceDescription.getViewDescriptions().values() )
 		{
 			final ViewRegistration viewRegistration = new ViewRegistration( vDesc.getTimePointId(), vDesc.getViewSetupId() );
 			viewRegistration.identity();
 			regMap.put( viewRegistration, viewRegistration );
 		}
-		
+
 		final ViewRegistrations viewRegistrations = new ViewRegistrations( regMap );
-		
+
 		// assemble the interestpoints and a list of filenames to copy
 		final ViewInterestPoints viewsInterestPoints = new ViewInterestPoints( new HashMap< ViewId, ViewInterestPointLists >() );
 
