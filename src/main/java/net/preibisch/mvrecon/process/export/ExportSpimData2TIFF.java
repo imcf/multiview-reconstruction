@@ -108,7 +108,7 @@ public class ExportSpimData2TIFF implements ImgExport
 			final double max )
 	{
 		// write the image
-		if ( !this.saver.exportImage( img, bb, downsampling, anisoF, title, fusionGroup, min, max ) )
+		if ( !this.saver.exportImage( img, bb, downsampling, anisoF, title, fusionGroup, min, max, params.getXMLFile(), 1 ) )
 			return false;
 
 		final ViewId newViewId = identifyNewViewId( newTimepoints, newViewSetups, fusionGroup, fusion );
