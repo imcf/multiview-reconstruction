@@ -139,7 +139,7 @@ public class Define_Multi_View_Dataset implements PlugIn
 		// run the definition
 		final MultiViewDatasetDefinition def = datasetDefinitions.get( defaultDatasetDef );
 
-		IOFunctions.println( defaultDatasetDef );
+		// IOFunctions.println( defaultDatasetDef );
 
 		final SpimData2 spimData = def.createDataset();
 
