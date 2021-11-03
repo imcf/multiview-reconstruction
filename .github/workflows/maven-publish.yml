@@ -27,13 +27,29 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
       
-    - uses: "marvinpinto/action-automatic-releases@latest"
+    - name: Set Release version env variable
+      run: |
+        echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        tag_name: ${{ env.RELEASE_VERSION }}
+        release_name: Release ${{ env.RELEASE_VERSION }}
+        draft: false
         prerelease: false
-        files: |
-          LICENSE.txt
-          *.jar
+
+      
+#     - uses: "marvinpinto/action-automatic-releases@latest"
+#       with:
+#         automatic_release_tag: ${{ env.RELEASE_VERSION }}
+#         repo_token: "${{ secrets.GITHUB_TOKEN }}"
+#         prerelease: false
+#         files: |
+#           LICENSE.txt
+#           *.jar
 
 #   publish-snapshot:
 #     needs: build
