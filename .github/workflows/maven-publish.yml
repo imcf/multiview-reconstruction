@@ -9,44 +9,44 @@ on:
     - master
 
 jobs:
-  build:
+#   build:
 
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: read
+#       packages: write
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 
-      uses: actions/setup-java@v1
-      with:
-        java-version: 8
-        java-package: jdk+fx
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Set up JDK 
+#       uses: actions/setup-java@v1
+#       with:
+#         java-version: 8
+#         java-package: jdk+fx
         
-    - name: Build with Maven
-      run: mvn clean package
+#     - name: Build with Maven
+#       run: mvn clean package
       
-#     - name: Create Release
-#       id: create_release
-#       uses: actions/create-release@v1
-#       env:
-#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#       with:
-#         tag_name: ${{ env.RELEASE_VERSION }}
-#         release_name: Release ${{ env.RELEASE_VERSION }}
-#         draft: false
-#         prerelease: false
+# #     - name: Create Release
+# #       id: create_release
+# #       uses: actions/create-release@v1
+# #       env:
+# #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+# #       with:
+# #         tag_name: ${{ env.RELEASE_VERSION }}
+# #         release_name: Release ${{ env.RELEASE_VERSION }}
+# #         draft: false
+# #         prerelease: false
 
       
-#     - uses: "marvinpinto/action-automatic-releases@latest"
-#       with:
-#         automatic_release_tag: ${{ env.RELEASE_VERSION }}
-#         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-#         prerelease: false
-#         files: |
-#           LICENSE.txt
-#           *.jar
+# #     - uses: "marvinpinto/action-automatic-releases@latest"
+# #       with:
+# #         automatic_release_tag: ${{ env.RELEASE_VERSION }}
+# #         repo_token: "${{ secrets.GITHUB_TOKEN }}"
+# #         prerelease: false
+# #         files: |
+# #           LICENSE.txt
+# #           *.jar
 
   publish-snapshot:
     needs: build
@@ -78,7 +78,7 @@ jobs:
         run: mvn -B versions:set -DnewVersion=v${{env.RELEASE_VERSION}} -DgenerateBackupPoms=false
 
       - name: Publish to GitHub Packages Apache Maven
-        run: mvn -B deploy -DskipTests --file pom.xml
+        run: mvn clean deploy -DskipTests
         env:
           GITHUB_TOKEN: ${{ github.token }}
  
