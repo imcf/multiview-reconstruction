@@ -54,33 +54,33 @@ jobs:
 #           LICENSE.txt
 #           *.jar
 
-  publish-snapshot:
-    needs: build
-    runs-on: ubuntu-latest
+#   publish-snapshot:
+#     needs: build
+#     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
+#     steps:
+#       - uses: actions/checkout@v2
 
-      - name: Set up settings.xml for GitHub Packages
-        uses: actions/setup-java@v1
-        with:
-          java-version: 8
-          java-package: jdk+fx
+    - name: Set up settings.xml for GitHub Packages
+      uses: actions/setup-java@v1
+      with:
+        java-version: 8
+        java-package: jdk+fx
 
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} 
-        with: 
-          tag_name: v${{VERSION_NUMBER}}
-          release_name: Release V${{VERSION_NUMBER}} 
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} 
+      with: 
+        tag_name: v${{VERSION_NUMBER}}
+        release_name: Release V${{VERSION_NUMBER}} 
 
-      - name: Update version
-        run: mvn -B versions:set -DnewVersion=v${{VERSION_NUMBER}} -DgenerateBackupPoms=false
+    - name: Update version
+      run: mvn -B versions:set -DnewVersion=v${{VERSION_NUMBER}} -DgenerateBackupPoms=false
 
-      - name: Publish to GitHub Packages Apache Maven
-        run: mvn -B deploy -DskipTests --file pom.xml
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+    - name: Publish to GitHub Packages Apache Maven
+      run: mvn -B deploy -DskipTests --file pom.xml
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
  
  
