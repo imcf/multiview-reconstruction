@@ -42,6 +42,6 @@ jobs:
           java-package: jdk+fx
 
       - name: Publish SNAPSHOT version to GitHub Packages (we can skip tests since we only deploy if the build workflow succeeded)
-        run: mvn -B --no-transfer-progress deploy -DskipTests --projects cxf-spring-boot-starter
+        run: mvn -B --no-transfer-progress deploy -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
