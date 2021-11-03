@@ -30,16 +30,16 @@ jobs:
     - name: Set Release version env variable
       run: |
         echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ env.RELEASE_VERSION }}
-        release_name: Release ${{ env.RELEASE_VERSION }}
-        draft: false
-        prerelease: false
+#     - name: Create Release
+#       id: create_release
+#       uses: actions/create-release@v1
+#       env:
+#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       with:
+#         tag_name: ${{ env.RELEASE_VERSION }}
+#         release_name: Release ${{ env.RELEASE_VERSION }}
+#         draft: false
+#         prerelease: false
 
       
 #     - uses: "marvinpinto/action-automatic-releases@latest"
@@ -51,33 +51,33 @@ jobs:
 #           LICENSE.txt
 #           *.jar
 
-#   publish-snapshot:
-#     needs: build
-#     runs-on: ubuntu-latest
+  publish-snapshot:
+    needs: build
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v2
 
-#       - name: Set up settings.xml for GitHub Packages
-#         uses: actions/setup-java@v1
-#         with:
-#           java-version: 8
-#           java-package: jdk+fx
+      - name: Set up settings.xml for GitHub Packages
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+          java-package: jdk+fx
 
-#       - name: Create GitHub Release
-#         uses: actions/create-release@v1
-#         env:
-#           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} 
-#         with: 
-#           tag_name: v${{github.run_number}}
-#           release_name: Release V${{github.run_number}} 
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} 
+        with: 
+          tag_name: v${{env.RELEASE_VERSION}}
+          release_name: Release V${{env.RELEASE_VERSION}} 
 
-#       - name: Update version
-#         run: mvn -B versions:set -DnewVersion=v${{github.run_number}} -DgenerateBackupPoms=false
+      - name: Update version
+        run: mvn -B versions:set -DnewVersion=v${{env.RELEASE_VERSION}} -DgenerateBackupPoms=false
 
-#       - name: Publish to GitHub Packages Apache Maven
-#         run: mvn -B deploy -DskipTests --file pom.xml
-#         env:
-#           GITHUB_TOKEN: ${{ github.token }}
+      - name: Publish to GitHub Packages Apache Maven
+        run: mvn -B deploy -DskipTests --file pom.xml
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
  
  
