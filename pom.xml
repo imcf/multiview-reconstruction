@@ -119,12 +119,13 @@ like Selective Plane Illumination Microscopy (SPIM) Data.</description>
 		<releaseProfiles>deploy-to-scijava</releaseProfiles>
 	</properties>
 
-	<repositories>
+	<distributionManagement>
 		<repository>
-			<id>scijava.public</id>
-			<url>https://maven.scijava.org/content/groups/public</url>
+			<id>github</id>
+			<name>Releases</name>
+			<url>https://maven.pkg.github.com/imcf/multiview-reconstruction</url>
 		</repository>
-	</repositories>
+	</distributionManagement>
 
 	<dependencies>
 		<!-- BigDataViewer dependencies -->
