@@ -25,12 +25,13 @@ jobs:
         java-package: jdk+fx
         
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn clean -B package --file pom.xml
       
     - name: Get version
       run: |
         VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-        echo "::set-output name=version::$VERSION"
+        echo "::set-output name=VERSION_NUMBER::$VERSION"
+        echo $VERSION_NUMBER
       id: get_version
 #     - name: Create Release
 #       id: create_release
@@ -71,11 +72,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} 
         with: 
-          tag_name: v${{env.RELEASE_VERSION}}
-          release_name: Release V${{env.RELEASE_VERSION}} 
+          tag_name: v${{VERSION_NUMBER}}
+          release_name: Release V${{VERSION_NUMBER}} 
 
       - name: Update version
-        run: mvn -B versions:set -DnewVersion=v${{env.RELEASE_VERSION}} -DgenerateBackupPoms=false
+        run: mvn -B versions:set -DnewVersion=v${{VERSION_NUMBER}} -DgenerateBackupPoms=false
 
       - name: Publish to GitHub Packages Apache Maven
         run: mvn -B deploy -DskipTests --file pom.xml
