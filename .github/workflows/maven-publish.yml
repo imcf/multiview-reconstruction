@@ -41,7 +41,19 @@ jobs:
           java-version: 8
           java-package: jdk+fx
 
-      - name: Publish SNAPSHOT version to GitHub Packages (we can skip tests since we only deploy if the build workflow succeeded)
-        run: mvn -B --no-transfer-progress deploy -DskipTests
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} 
+        with: 
+          tag_name: v${{github.run_number}}
+          release_name: Release V${{github.run_number}} 
+
+      - name: Update version
+        run: mvn -B versions:set -DnewVersion=v${{github.run_number}} -DgenerateBackupPoms=false
+
+      - name: Publish to GitHub Packages Apache Maven
+       run: mvn -B deploy -DskipTests --file pom.xml
+       env:
+         GITHUB_TOKEN: ${{ github.token }}
+ 
