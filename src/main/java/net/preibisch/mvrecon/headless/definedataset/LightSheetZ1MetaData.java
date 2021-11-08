@@ -196,7 +196,6 @@ public class LightSheetZ1MetaData
 
 		// number each angle and tile has its own series
 		final int numAorT = r.getSeriesCount();
-		System.out.println(numAorT);
 		final int numTiles = numAorT;
 
 		// make sure every angle has the same amount of timepoints, channels, illuminations
