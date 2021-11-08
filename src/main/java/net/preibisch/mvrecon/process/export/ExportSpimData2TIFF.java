@@ -5,7 +5,7 @@
  * %%
  * Copyright (C) 2012 - 2021 Multiview Reconstruction developers.
  * %%
- * This program is free software: you can retribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
@@ -148,7 +148,6 @@ public class ExportSpimData2TIFF implements ImgExport
 		try
 		{
 			io.save( newSpimData, new File( params.getXMLFile() ).getAbsolutePath() );
-			IOFunctions.println(params.getXMLFile());
 
 			IOFunctions.println( "(" + new Date( System.currentTimeMillis() ) + "): Saved xml '" + io.lastFileName() + "'." );
 
