@@ -24,9 +24,6 @@ package net.preibisch.mvrecon.fiji.datasetmanager.metadatarefinement;
 
 import java.util.List;
 
-import org.apache.commons.io.function.IOFunction;
-
-import net.preibisch.legacy.io.IOFunctions;
 import net.preibisch.mvrecon.fiji.datasetmanager.FileListDatasetDefinitionUtil;
 import net.preibisch.mvrecon.fiji.datasetmanager.StackList;
 import net.preibisch.mvrecon.fiji.datasetmanager.FileListDatasetDefinitionUtil.TileOrAngleInfo;
@@ -54,7 +51,6 @@ public class CZITileOrAngleRefiner implements TileOrAngleRefiner
 			tmp = r.getMetadataValue( "Information|Image|V|AxisOfRotation #1" );
 			if ( tmp != null && tmp.toString().trim().length() >= 5 )
 			{
-				//IOFunctions.println( "Rotation axis: " + tmp );
 				final String[] axes = tmp.toString().split( " " );
 
 				if ( Double.parseDouble( axes[ 0 ] ) == 1.0 )
