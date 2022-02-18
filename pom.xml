@@ -126,14 +126,6 @@ like Selective Plane Illumination Microscopy (SPIM) Data.</description>
 		</repository>
 	</repositories>
 
-	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>Releases</name>
-			<url>https://maven.pkg.github.com/imcf/multiview-reconstruction</url>
-		</repository>
-	</distributionManagement>
-
 	<dependencies>
 		<!-- BigDataViewer dependencies -->
 		<dependency>
@@ -276,11 +268,7 @@ like Selective Plane Illumination Microscopy (SPIM) Data.</description>
 			<groupId>org.janelia.saalfeldlab</groupId>
 			<artifactId>n5</artifactId>
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.openjfx</groupId>
-			<artifactId>javafx-controls</artifactId>
-			<version>8</version>
-		  </dependency> -->
+
 	</dependencies>
 
 	<profiles>
@@ -288,17 +276,6 @@ like Selective Plane Illumination Microscopy (SPIM) Data.</description>
 			<id>fatjar</id>
 			<build>
 				<plugins>
-					<!-- <plugin>
-						<groupId>org.openjfx</groupId>
-						<artifactId>javafx-maven-plugin</artifactId>
-						<version>0.0.1</version>
-						<configuration>
-							<mainClass>HelloFX</mainClass>
-						</configuration>
-					</plugin> -->
-					<!-- Maven shade for Uber Jar -->
-					<!-- https://maven.apache.org/plugins/maven-shade-plugin/shade-mojo.html -->
-					<!-- https://databricks.gitbooks.io/databricks-spark-knowledge-base/content/troubleshooting/missing_dependencies_in_jar_files.html -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-shade-plugin</artifactId>
