@@ -28,7 +28,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '8'
-          distribution: 'zulu'
+          distribution: 'zulu+fx'
       - name: Set up CI environment
         run: .github/setup.sh
       - name: Execute the build
