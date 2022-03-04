@@ -353,6 +353,8 @@ public class LegacyLightSheet7ImgLoader extends AbstractImgFactoryImgLoader
 		if (options instanceof DynamicMetadataOptions) {
 			((DynamicMetadataOptions) options).setBoolean(
 					ZeissCZIReader.ALLOW_AUTOSTITCHING_KEY, false);
+			((DynamicMetadataOptions) options).setBoolean(
+					ZeissCZIReader.RELATIVE_POSITIONS_KEY, true);
 		} else {
 			System.out.println("What's wrong?");
 		}

@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -409,72 +410,92 @@ public class LightSheet7MetaData
 
 			if (anglesList.size() != numAorT)
 			{
+				HashSet X_pos = new HashSet();
+				HashSet Y_pos = new HashSet();
+				// for ( int at = 1; at < numAorT; at++)
+				// {
+				// 	Integer corrected_number_planes = new Integer(current_meta.getPlaneCount(at));
+				// 	corrected_number_planes = corrected_number_planes / (anglesList.size() * numC);
+				// 	tmp = current_meta.getPlanePositionX(at, corrected_number_planes - 1).value();
+
+				// 	Double x_cal = (Double) current_meta.getPixelsPhysicalSizeX(0).value();
+				// 	Double tmp_x = Double.parseDouble(tmp.toString());
+				// 	X_pos.add(tmp_x* x_cal);
+
+				// 	tmp = current_meta.getPlanePositionY(at, corrected_number_planes - 1).value();
+				// 	Double tmp_y = Double.parseDouble(tmp.toString());
+				// 	Double y_cal = (Double) current_meta.getPixelsPhysicalSizeY(0).value();
+				// 	Y_pos.add(tmp_y * y_cal);
+				// }
+
+				// final Integer number_x_tiles = X_pos.size();
+				// final Integer number_y_tiles = Y_pos.size();
+
+
 				for ( int at = 0; at < numAorT; at++ )
 				{
 					Integer corrected_number_planes = new Integer(current_meta.getPlaneCount(at));
 					corrected_number_planes = corrected_number_planes / (anglesList.size() * numC);
 					tmp = current_meta.getPlanePositionX(at, corrected_number_planes - 1).value();
-					Object test = metaData.get("Experiment|AcquisitionBlock|TilesSetup|PositionGroup|TileAcquisitionOverlap #1");
-					Double overlap = (test != null) ? Double.parseDouble(test.toString()) : 0.0;
+					// Object test = metaData.get("Experiment|AcquisitionBlock|TilesSetup|PositionGroup|TileAcquisitionOverlap #1");
+					// Double overlap = (test != null) ? Double.parseDouble(test.toString()) : 0.0;
 
 					Double x_cal = (Double) current_meta.getPixelsPhysicalSizeX(0).value();
-					Double tmp_x = Double.parseDouble(tmp.toString());
-					if (at == 0)
-					{
-						Double number_x_tiles = getDouble(metaData, "Experiment|AcquisitionBlock|TilesSetup|PositionGroup|TilesX #1");
-						if (number_x_tiles > 1)
-						{
-							if (acquisition_mode.equals("CenteredGrid"))
-							{
-								Double width = Double.parseDouble(current_meta.getPixelsSizeX(0).toString()) ;
-								tmp_x = tmp_x - ( width * (1 - overlap) * (number_x_tiles / 2.0 - 0.5) * x_cal);
-							}
-							if (acquisition_mode.equals("ConvexHull"))
-							{
-								Double orig_tmp = (Double) current_meta.getPlanePositionX(0, corrected_number_planes - 1).value();
-								tmp_x = orig_tmp;
-							}
-						}
+					Double tmp_x = Double.parseDouble(tmp.toString()) * x_cal;
+					// if (at == 0)
+					// {
+					// 	// Double number_x_tiles = getDouble(metaData, "Experiment|AcquisitionBlock|TilesSetup|PositionGroup|TilesX #1");
+					// 	if (number_x_tiles > 1)
+					// 	{
+					// 		Double width = Double.parseDouble(current_meta.getPixelsSizeX(0).toString()) ;
+					// 		tmp_x = tmp_x - ( width * (1 - overlap) * (number_x_tiles / 2.0 - 0.5) * x_cal);
 
-					}
-					if (at != 0)
-					{
-						Double orig_tmp = (Double) current_meta.getPlanePositionX(0, corrected_number_planes - 1).value();
-						Double tmp_x_cal = (Double) tmp_x * x_cal;
-						tmp_x = tmp_x_cal + orig_tmp;
-					}
+					// 		// if (acquisition_mode.equals("ConvexHull"))
+					// 		// {
+					// 		// 	Double orig_tmp = (Double) current_meta.getPlanePositionX(0, corrected_number_planes - 1).value();
+					// 		// 	tmp_x = orig_tmp;
+					// 		// }
+					// 	}
+
+					// }
+					// if (at != 0)
+					// {
+					// 	Double orig_tmp = (Double) current_meta.getPlanePositionX(0, corrected_number_planes - 1).value();
+					// 	Double tmp_x_cal = (Double) tmp_x * x_cal;
+					// 	tmp_x = tmp_x_cal + orig_tmp;
+					// }
 
 
 
 					pos[ 0 ] = (tmp_x != null) ? Double.parseDouble( tmp_x.toString() ) : 0.0;
 
 					tmp = current_meta.getPlanePositionY(at, corrected_number_planes - 1).value();
-					Double tmp_y = Double.parseDouble(tmp.toString());
-					Double y_cal = (Double) current_meta.getPixelsPhysicalSizeY(0).value();
 
-					if (at == 0)
-					{
-						Double number_y_tiles = getDouble(metaData, "Experiment|AcquisitionBlock|TilesSetup|PositionGroup|TilesY #1");
-						if (number_y_tiles > 1)
-						{
-							if (acquisition_mode.equals("CenteredGrid"))
-							{
-								Double height = Double.parseDouble((current_meta.getPixelsSizeY(0)).toString());
-								tmp_y = tmp_y - ( height * (1 - overlap) * (number_y_tiles / 2.0 - 0.5) * y_cal) ;
-							}
-							if (acquisition_mode.equals("ConvexHull"))
-							{
-								Double orig_tmp = (Double) current_meta.getPlanePositionY(0, corrected_number_planes - 1).value();
-								tmp_y = orig_tmp;
-							}
-						}
-					}
-					if (at != 0)
-					{
-						Double orig_tmp = (Double) current_meta.getPlanePositionY(0, corrected_number_planes - 1).value();
-						Double tmp_xy_cal = (Double) tmp_y * y_cal;
-						tmp_y = tmp_xy_cal + orig_tmp;
-					}
+					Double y_cal = (Double) current_meta.getPixelsPhysicalSizeY(0).value();
+					Double tmp_y = Double.parseDouble(tmp.toString()) * y_cal;
+					// if (at == 0)
+					// {
+					// 	//Double number_y_tiles = getDouble(metaData, "Experiment|AcquisitionBlock|TilesSetup|PositionGroup|TilesY #1");
+					// 	if (number_y_tiles > 1)
+					// 	{
+					// 		// if (acquisition_mode.equals("CenteredGrid"))
+					// 		// {
+					// 		Double height = Double.parseDouble((current_meta.getPixelsSizeY(0)).toString());
+					// 		tmp_y = tmp_y - ( height * (1 - overlap) * (number_y_tiles / 2.0 - 0.5) * y_cal) ;
+					// 		// }
+					// 		// if (acquisition_mode.equals("ConvexHull"))
+					// 		// {
+					// 		// 	Double orig_tmp = (Double) current_meta.getPlanePositionY(0, corrected_number_planes - 1).value();
+					// 		// 	tmp_y = orig_tmp;
+					// 		// }
+					// 	}
+					// }
+					// if (at != 0)
+					// {
+					// 	Double orig_tmp = (Double) current_meta.getPlanePositionY(0, corrected_number_planes - 1).value();
+					// 	Double tmp_xy_cal = (Double) tmp_y * y_cal;
+					// 	tmp_y = tmp_xy_cal + orig_tmp;
+					// }
 
 					pos[ 1 ] = (tmp_y != null) ? Double.parseDouble( tmp_y.toString() ) : 0.0;
 
