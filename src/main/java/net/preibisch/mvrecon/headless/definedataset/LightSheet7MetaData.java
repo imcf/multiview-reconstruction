@@ -351,7 +351,7 @@ public class LightSheet7MetaData
 
 		try
 		{
-			tmp = metaData.get( "Experiment|AcquisitionBlock|AcquisitionModeSetup|Objective #1" );
+			tmp = metaData.get( "Experiment|AcquisitionBlock|AcquisitionModeSetup|Objective" );
 			objective = (tmp != null) ? tmp.toString() : "Unknown Objective";
 		}
 		catch ( Exception e )
@@ -490,7 +490,7 @@ public class LightSheet7MetaData
 		// get the axis of rotation
 		try
 		{
-			tmp = metaData.get( "Information|Image|V|AxisOfRotation #1" );
+			tmp = metaData.get( "Information|Image|V|AxisOfRotation" );
 			if ( tmp != null && tmp.toString().trim().length() >= 5 )
 			{
 				IOFunctions.println( "Rotation axis: " + tmp );
